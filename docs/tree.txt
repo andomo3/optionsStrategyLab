@@ -1,0 +1,23 @@
+options-strategy-lab/
+  README.md
+  docs/
+    SYSTEM_DESIGN.md
+    API.md
+    DATA_MODEL.md
+    RISK_ENGINE.md
+  backend/
+    manage.py
+    config/
+    apps/
+      market_data/
+      strategies/
+      pricing/
+      risk/
+      jobs/
+      users/
+  frontend/
+    (Next.js app)
+  infra/
+    docker-compose.yml
+  .env.example
+  LICENSE
