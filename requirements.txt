@@ -1,0 +1,48 @@
+# ----------------------------
+# Core backend (Django + API)
+# ----------------------------
+Django>=5.0,<6.0
+djangorestframework>=3.15,<4.0
+django-cors-headers>=4.3,<5.0
+django-environ>=0.11,<1.0
+django-filter>=24.2,<25.0
+
+# API docs (optional but recommended)
+drf-spectacular>=0.27,<0.28
+
+# ----------------------------
+# Database
+# ----------------------------
+psycopg2-binary>=2.9,<3.0
+
+# ----------------------------
+# Async + caching
+# ----------------------------
+celery>=5.4,<6.0
+redis>=5.0,<6.0
+
+# ----------------------------
+# Quant / numerical computing
+# ----------------------------
+numpy>=1.26,<3.0
+pandas>=2.2,<3.0
+scipy>=1.12,<2.0
+
+# ----------------------------
+# Server / static handling (prod-friendly)
+# ----------------------------
+gunicorn>=22.0,<23.0
+whitenoise>=6.7,<7.0
+
+# ----------------------------
+# Testing / quality (recommended)
+# ----------------------------
+pytest>=8.0,<9.0
+pytest-django>=4.8,<5.0
+factory-boy>=3.3,<4.0
+
+black>=24.0,<25.0
+isort>=5.13,<6.0
+flake8>=7.0,<8.0
+mypy>=1.8,<2.0
+types-redis>=4.6.0.20240425
