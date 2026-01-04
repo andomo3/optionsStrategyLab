@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-sand-50 text-ink-900;
+  background-image: radial-gradient(circle at top left, rgba(61, 198, 182, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(17, 24, 39, 0.08), transparent 35%);
+}
+
+.container {
+  @apply mx-auto max-w-6xl px-6;
+}

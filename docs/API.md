@@ -1,24 +1,24 @@
-# API (Draft)
+# API Draft
 
-## Strategies
-- `POST /api/strategies`
-- `GET /api/strategies`
-- `GET /api/strategies/{id}`
-- `POST /api/strategies/{id}/legs`
-- `PUT /api/strategies/{id}/legs/{leg_id}`
-- `DELETE /api/strategies/{id}/legs/{leg_id}`
+## Health
+- GET `/api/health/` -> `{ "status": "ok" }`
 
-## Pricing (Sync)
-- `POST /api/strategies/{id}/price`
-  - body: `{ as_of, model: "BS", overrides?: {...} }`
-  - returns: `{ per_leg, totals, payoff_grid, metadata }`
+## Strategies (placeholders)
+- GET `/api/strategies/`
+- POST `/api/strategies/`
+- GET `/api/strategies/{id}/`
 
-## Risk (Async)
-- `POST /api/strategies/{id}/risk`
-  - body: `{ as_of, horizon_days, model, params, paths, seed }`
-  - returns: `{ job_id }`
-- `GET /api/risk/{run_id}`
-  - returns: `{ pop, exp_pnl, var, cvar, distribution_ref, params, seed }`
+## Market data (placeholders)
+- GET `/api/market-data/`
 
-## Jobs
-- `GET /api/jobs/{job_id}`
+## Pricing (placeholders)
+- POST `/api/pricing/preview/`
+- POST `/api/pricing/greeks/`
+
+## Risk (placeholders)
+- POST `/api/risk/scenario/`
+- POST `/api/risk/monte-carlo/`
+
+## Jobs (placeholders)
+- POST `/api/jobs/`
+- GET `/api/jobs/{id}/`

@@ -1,30 +1,47 @@
-# Options Strategy Lab — Interactive Decision Platform
+# Options Strategy Lab
 
-A trader-facing web platform to build multi-leg option strategies and quantify risk under model assumptions, with scenario controls and Monte Carlo outcome distributions.
+Production-ready scaffold for a quant-oriented platform that lets users define multi-leg option strategies and explore pricing, Greeks, and risk. This repository contains boilerplate only.
 
-## What this platform does
-- Create/edit multi-leg strategies (spreads, straddles, condors, calendars)
-- Price legs and compute Greeks (per-leg + aggregated)
-- Interactive scenario analysis:
-  - spot move, vol shift, time decay scrubber
-- Monte Carlo risk analysis:
-  - distribution of outcomes, probability of profit, VaR/CVaR
-- “Explain” panels for each metric to make results interpretable
+## Purpose and scope
+- Deliver a clean, production-leaning starter for a data-heavy web app.
+- Provide placeholders for APIs, services, and UI surfaces.
+- Defer all quant logic, market data ingestion, and charting to later phases.
 
-## Tech Stack
-**Backend**
-- Django + DRF
-- PostgreSQL
-- Redis (cache + Celery broker)
-- Celery workers for Monte Carlo + heavy computations
+## Tech stack
+Backend:
+- Python 3.11+, Django, DRF
+- PostgreSQL, Redis, Celery (stubbed)
+- WhiteNoise, Gunicorn
 
-**Frontend**
-- Next.js + React + TypeScript
-- Tailwind CSS + shadcn/ui
-- Plotly.js (payoff, distributions) + simple chart libs as needed
-- Framer Motion for UI polish
+Frontend:
+- Next.js (App Router), React, TypeScript
+- Tailwind CSS, shadcn/ui baseline
 
-## Quickstart (Local)
-### 1) Configure environment
+Infra:
+- Docker Compose (Postgres, Redis, API, worker, frontend)
+
+## Local run
 ```bash
 cp .env.example .env
+cd infra
+docker-compose up --build
+```
+
+Backend health: `http://localhost:8000/api/health/`
+Frontend: `http://localhost:3000`
+
+## Repository structure
+```
+backend/        Django project with app layer stubs
+frontend/       Next.js app router + Tailwind
+infra/          Docker Compose and infra placeholders
+docs/           System design and API drafts
+.github/        CI skeleton
+```
+
+## Roadmap
+- Add real data models for strategies, legs, and market data
+- Implement pricing services and Greeks aggregation
+- Add scenario controls + charting (Plotly)
+- Wire Monte Carlo jobs to Celery
+- Add auth and multi-user permissions
