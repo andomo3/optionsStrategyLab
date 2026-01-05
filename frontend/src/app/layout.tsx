@@ -14,18 +14,18 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="container py-10">
-          <header className="flex items-center justify-between border-b border-sand-200 pb-6">
+          <header className="flex items-center justify-between border-b border-ink pb-6">
             <div>
-              <p className="text-sm font-mono text-ink-500">Options Strategy Lab</p>
+              <p className="text-sm font-mono text-ink">Options Strategy Lab</p>
               <h1 className="text-3xl font-semibold tracking-tight">Decision Platform</h1>
             </div>
-            <nav className="flex gap-6 text-sm text-ink-700">
-              <a className="hover:text-ink-900" href="/">Home</a>
-              <a className="hover:text-ink-900" href="/strategies">Strategies</a>
+            <nav className="flex gap-6 text-sm text-ink">
+              <a className="hover:text-accent" href="/">Home</a>
+              <a className="hover:text-accent" href="/strategies">Strategies</a>
             </nav>
           </header>
           <main className="py-10">{children}</main>
-          <footer className="border-t border-sand-200 pt-6 text-sm text-ink-500">
+          <footer className="border-t border-ink pt-6 text-sm text-ink">
             Built for scenario exploration and risk insights.
           </footer>
         </div>

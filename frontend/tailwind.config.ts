@@ -5,20 +5,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: {
-          900: "#111827",
-          700: "#374151",
-          500: "#6B7280",
-        },
-        sand: {
-          50: "#FAF7F2",
-          100: "#F5EFE6",
-          200: "#E9DEC9",
-        },
-        mint: {
-          500: "#3DC6B6",
-          600: "#2AA999",
-        },
+        ink: "#000000",
+        paper: "#FFFFFF",
+        accent: "#F62DAE",
       },
       fontFamily: {
         sans: ["Space Grotesk", "sans-serif"],
