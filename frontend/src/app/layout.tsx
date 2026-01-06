@@ -17,11 +17,12 @@ export default function RootLayout({
           <header className="flex items-center justify-between border-b border-ink pb-6">
             <div>
               <p className="text-sm font-mono text-ink">Options Strategy Lab</p>
-              <h1 className="text-3xl font-semibold tracking-tight">Decision Platform</h1>
+              {/* <h1 className="text-3xl font-semibold tracking-tight">Decision Platform</h1> */}
             </div>
             <nav className="flex gap-6 text-sm text-ink">
               <a className="hover:text-accent" href="/">Home</a>
               <a className="hover:text-accent" href="/strategies">Strategies</a>
+              <a className="hover:text-accent" href="/auth">Auth</a>
             </nav>
           </header>
           <main className="py-10">{children}</main>

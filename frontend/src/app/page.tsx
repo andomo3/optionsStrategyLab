@@ -1,7 +1,11 @@
 export const dynamic = "force-dynamic";
 
 async function getHealth() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+  // Prefer an internal base URL for server-side fetches in Docker.
+  const baseUrl =
+    process.env.INTERNAL_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "http://backend:8000";
   try {
     const res = await fetch(`${baseUrl}/api/health/`, { cache: "no-store" });
     if (!res.ok) {

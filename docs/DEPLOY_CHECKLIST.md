@@ -8,4 +8,6 @@
 - Redis cache reachable
 - Celery worker running
 - Monitoring enabled (Sentry placeholder)
+- SENTRY_DSN configured for production
+- Log aggregation configured (stdout/centralized)
 - Backups plan documented

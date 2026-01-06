@@ -20,3 +20,4 @@ This scaffold separates concerns across presentation, content, services, and inf
 ## Observability hooks
 - Environment variable placeholders for future Sentry integration.
 - Structured logging and tracing to be added in later phases.
+ - Log output via stdout for container aggregation.

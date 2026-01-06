@@ -18,6 +18,9 @@ class StressTestResult(models.Model):
     risk_scenario = models.ForeignKey(
         RiskScenario, related_name="stress_test_results", on_delete=models.CASCADE
     )
+    spot_shift = models.IntegerField(default=0)
+    vol_shift = models.IntegerField(default=0)
+    time_shift = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
