@@ -1,27 +1,19 @@
 # Data Model Draft
 
-## EER diagram
-![EER Diagram](./eer_diagram.png)
-
 ## Core entities
-### Strategy (base)
+### Strategy
 - id
 - name
+- owner_id (nullable)
 - created_at
 
-### MomentumStrategy (subtype)
-- id (PK, FK to Strategy)
-
-### MLStrategy (subtype)
-- id (PK, FK to Strategy)
-
-### ArbitrageStrategy (subtype)
-- id (PK, FK to Strategy)
-
-### StrategyLeg (weak entity)
+### StrategyLeg
 - id
 - strategy_id (FK to Strategy)
-- name
+- right (call/put)
+- strike (nullable)
+- expiry (nullable)
+- quantity
 - created_at
 
 ### PricingRun
@@ -41,9 +33,7 @@
 - created_at
 
 ## Relationships and constraints
-- Strategy specialization is total and disjoint: every Strategy is exactly one of Momentum, ML, or Arbitrage.
-- Implementation detail: `strategy_kind` on Strategy acts as a discriminator to enforce the subtype.
-- Strategy -> StrategyLeg is 1:N with mandatory participation on both sides (a strategy must have at least one leg).
+- Strategy -> StrategyLeg is 1:N with mandatory participation on the leg side.
 - Strategy -> PricingRun is 1:N with optional participation on Strategy, mandatory on PricingRun.
 - Strategy -> StressTestResult is 1:N with optional participation on Strategy, mandatory on StressTestResult.
 - RiskScenario -> StressTestResult is 1:N with optional participation on RiskScenario, mandatory on StressTestResult.

@@ -1,4 +1,6 @@
+from datetime import timedelta
 from pathlib import Path
+import os
 import sys
 
 import environ
@@ -19,6 +21,13 @@ env = environ.Env(
     REDIS_URL=(str, "redis://localhost:6379/0"),
     CELERY_BROKER_URL=(str, "redis://localhost:6379/1"),
     CELERY_RESULT_BACKEND=(str, "redis://localhost:6379/2"),
+    JWT_SECRET=(str, ""),
+    JWT_EXPIRY_SECONDS=(int, 3600),
+    JWT_REFRESH_SECONDS=(int, 86400),
+    PRICING_CACHE_TTL=(int, 60),
+    DJANGO_ADMIN_URL=(str, "admin/"),
+    DEMO_USERNAME=(str, "demo"),
+    DEMO_PASSWORD=(str, "demo1234"),
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, "local"),
 )
@@ -33,6 +42,8 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"])
+CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -43,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "drf_spectacular",
     "corsheaders",
     "common",
     "users",
@@ -120,6 +132,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
@@ -139,7 +152,19 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "NON_FIELD_ERRORS_KEY": "errors",
+}
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
+    "pricing": "30/min",
+    "risk_run": "10/min",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Options Strategy Lab API",
+    "DESCRIPTION": "API schema for Options Strategy Lab",
+    "VERSION": "0.1.0",
 }
 
 CACHES = {
@@ -152,6 +177,11 @@ CACHES = {
     }
 }
 
+if os.environ.get("PYTEST_CURRENT_TEST"):
+    CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+    }
+
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -160,6 +190,20 @@ CELERY_RESULT_SERIALIZER = "json"
 
 SENTRY_DSN = env("SENTRY_DSN")
 SENTRY_ENVIRONMENT = env("SENTRY_ENVIRONMENT")
+JWT_SECRET = env("JWT_SECRET")
+JWT_EXPIRY_SECONDS = env("JWT_EXPIRY_SECONDS")
+JWT_REFRESH_SECONDS = env("JWT_REFRESH_SECONDS")
+PRICING_CACHE_TTL = env("PRICING_CACHE_TTL")
+DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
+DEMO_USERNAME = env("DEMO_USERNAME")
+DEMO_PASSWORD = env("DEMO_PASSWORD")
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=JWT_EXPIRY_SECONDS),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=JWT_REFRESH_SECONDS),
+    "SIGNING_KEY": JWT_SECRET or SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 if SENTRY_DSN:
     try:

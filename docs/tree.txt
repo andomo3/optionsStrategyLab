@@ -1,23 +1,39 @@
-options-strategy-lab/
-  README.md
-  docs/
-    SYSTEM_DESIGN.md
-    API.md
-    DATA_MODEL.md
-    RISK_ENGINE.md
-  backend/
-    manage.py
-    config/
-    apps/
-      market_data/
-      strategies/
-      pricing/
-      risk/
-      jobs/
-      users/
-  frontend/
-    (Next.js app)
-  infra/
-    docker-compose.yml
-  .env.example
-  LICENSE
+backend
+backend/apps
+backend/apps/common
+backend/apps/common/services
+backend/apps/common/tests
+backend/apps/users
+backend/apps/users/services
+backend/apps/users/tests
+backend/apps/market_data
+backend/apps/market_data/services
+backend/apps/market_data/tests
+backend/apps/strategies
+backend/apps/strategies/migrations
+backend/apps/strategies/services
+backend/apps/strategies/tests
+backend/apps/pricing
+backend/apps/pricing/migrations
+backend/apps/pricing/services
+backend/apps/pricing/tests
+backend/apps/risk
+backend/apps/risk/migrations
+backend/apps/risk/services
+backend/apps/risk/tests
+backend/apps/jobs
+backend/apps/jobs/services
+backend/apps/jobs/tests
+backend/config
+backend/config/settings
+frontend
+frontend/src
+frontend/src/app
+frontend/src/app/auth
+frontend/src/app/strategies
+frontend/src/app/strategies/[id]
+frontend/src/components
+frontend/src/lib
+frontend/src/types
+docs
+infra

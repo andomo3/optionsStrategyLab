@@ -12,6 +12,7 @@ Backend:
 - Python 3.11+, Django, DRF
 - PostgreSQL, Redis, Celery (stubbed)
 - WhiteNoise, Gunicorn
+- JWT auth for API (legacy session/token retained)
 
 Frontend:
 - Next.js (App Router), React, TypeScript
@@ -23,12 +24,24 @@ Infra:
 ## Local run
 ```bash
 cp .env.example .env
-cd infra
-docker-compose up --build
+docker-compose -f infra/docker-compose.yml up --build
+```
+
+## Dev scripts
+```bash
+./scripts/dev_up.sh
+./scripts/dev_down.sh
+./scripts/reset_db.sh
+./scripts/fmt.sh
+./scripts/test.sh
 ```
 
 Backend health: `http://localhost:8000/api/health/`
 Frontend: `http://localhost:3000`
+
+## Demo mode
+- Seed demo data: `python backend/manage.py seed_demo`
+- Demo walkthrough: `docs/DEMO_SCRIPT.md`
 
 ## Repository structure
 ```
@@ -41,7 +54,6 @@ docs/           System design and API drafts
 
 ## Roadmap
 - Add real data models for strategies, legs, and market data
-- Implement pricing services and Greeks aggregation
-- Add scenario controls + charting (Plotly)
-- Wire Monte Carlo jobs to Celery
-- Add auth and multi-user permissions
+- Expand pricing surfaces and scenario tooling
+- Harden risk jobs and async workflows
+- Deployment checklists for Render + Vercel

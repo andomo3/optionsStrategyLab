@@ -3,55 +3,63 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useState } from "react";
 
-const baseUrl =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+import {
+  apiFetch,
+  clearTokens,
+  getAccessToken,
+  setTokens,
+} from "@/lib/api";
+
+type LoginResponse = { access: string; refresh: string };
+type MeResponse = { id: number; username: string };
 
 export default function AuthPage() {
-  const [token, setToken] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [status, setStatus] = useState<string>("Checking...");
   const [message, setMessage] = useState<string | null>(null);
 
-  // Load saved token for display.
-  useEffect(() => {
-    const stored = window.localStorage.getItem("auth_token");
-    if (stored) {
-      setToken(stored);
-    }
-  }, []);
-
   // Check auth status using the stored token.
-  const checkStatus = async (authToken?: string) => {
+  const checkStatus = async () => {
     setMessage(null);
     try {
-      const res = await fetch(`${baseUrl}/api/auth/status/`, {
-        headers: authToken ? { Authorization: `Token ${authToken}` } : {},
-      });
-      const data = await res.json();
-      if (data?.authenticated) {
-        setStatus(`Authenticated as ${data.username}`);
-      } else {
-        setStatus("Not authenticated");
-      }
+      const data = await apiFetch<MeResponse>("/api/auth/me/");
+      setStatus(`Authenticated as ${data.username}`);
     } catch (err) {
-      setStatus("Auth status unavailable");
+      setStatus("Not authenticated");
     }
   };
 
   useEffect(() => {
-    checkStatus(token);
-  }, [token]);
+    const token = getAccessToken();
+    if (!token) {
+      setStatus("Not authenticated");
+      return;
+    }
+    checkStatus();
+  }, []);
 
-  // Persist token for API calls.
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  // Login to obtain a JWT and store it.
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    window.localStorage.setItem("auth_token", token.trim());
-    setMessage("Token saved.");
+    setMessage(null);
+    try {
+      const data = await apiFetch<LoginResponse>("/api/auth/login/", {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+      });
+      setTokens(data.access, data.refresh);
+      await checkStatus();
+      setMessage("Token stored.");
+    } catch (err) {
+      setMessage("Login failed.");
+    }
   };
 
   // Clear token for sign-out.
   const clearToken = () => {
-    window.localStorage.removeItem("auth_token");
-    setToken("");
+    clearTokens();
+    setStatus("Not authenticated");
     setMessage("Token cleared.");
   };
 
@@ -60,44 +68,54 @@ export default function AuthPage() {
       <div>
         <h2 className="text-3xl font-semibold">Auth</h2>
         <p className="text-sm text-ink">
-          Save a token to enable write access in the API.
+          Sign in to store a JWT for write access in the API.
         </p>
       </div>
       <div className="rounded-xl border border-ink bg-paper p-6">
         <p className="text-sm text-ink">Status: {status}</p>
         <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
-          <label className="text-sm text-ink">API token</label>
+          <label className="text-sm text-ink">Username</label>
           <input
             className="w-full rounded-lg border border-ink bg-paper px-3 py-2 text-sm"
-            value={token}
+            value={username}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setToken(event.target.value)
+              setUsername(event.target.value)
             }
-            placeholder="Paste token here"
+            placeholder="Username"
+          />
+          <label className="text-sm text-ink">Password</label>
+          <input
+            className="w-full rounded-lg border border-ink bg-paper px-3 py-2 text-sm"
+            type="password"
+            value={password}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setPassword(event.target.value)
+            }
+            placeholder="Password"
           />
           <div className="flex flex-col gap-2 md:flex-row">
             <button
               className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-paper"
               type="submit"
             >
-              Save token
+              Sign in
             </button>
             <button
               className="rounded-lg border border-ink px-4 py-2 text-sm text-ink"
               type="button"
               onClick={clearToken}
             >
-              Clear token
+              Sign out
             </button>
           </div>
         </form>
         {message && <p className="mt-3 text-xs text-accent">{message}</p>}
       </div>
       <div className="rounded-xl border border-ink bg-paper p-6 text-sm text-ink">
-        <p className="font-semibold">Token tips</p>
+        <p className="font-semibold">JWT notes</p>
         <p className="mt-2">
-          Request a token from <code>/api/auth/token/</code> using your admin
-          credentials, then paste it here.
+          Tokens are stored in localStorage for now. Swap to httpOnly cookies in
+          production.
         </p>
       </div>
     </section>

@@ -21,3 +21,7 @@ This scaffold separates concerns across presentation, content, services, and inf
 - Environment variable placeholders for future Sentry integration.
 - Structured logging and tracing to be added in later phases.
  - Log output via stdout for container aggregation.
+
+## Auth
+- JWT is the primary API auth mechanism.
+- Legacy session/token endpoints are retained for admin-only or transitional use.

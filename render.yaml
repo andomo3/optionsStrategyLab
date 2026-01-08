@@ -1,0 +1,122 @@
+﻿services:
+  - type: web
+    name: options-strategy-lab-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend/manage.py migrate && gunicorn config.wsgi:application --chdir backend --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHONPATH
+        value: /opt/render/project/src/backend
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: options-strategy-lab-api.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://options-strategy-lab.vercel.app
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://options-strategy-lab.vercel.app
+      - key: DB_NAME
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: port
+      - key: REDIS_URL
+        fromService:
+          name: options-strategy-lab-redis
+          type: redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: options-strategy-lab-redis
+          type: redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          name: options-strategy-lab-redis
+          type: redis
+          property: connectionString
+  - type: worker
+    name: options-strategy-lab-worker
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A config worker -l INFO --workdir backend
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHONPATH
+        value: /opt/render/project/src/backend
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: options-strategy-lab-api.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://options-strategy-lab.vercel.app
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://options-strategy-lab.vercel.app
+      - key: DB_NAME
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: options-strategy-lab-db
+          property: port
+      - key: REDIS_URL
+        fromService:
+          name: options-strategy-lab-redis
+          type: redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: options-strategy-lab-redis
+          type: redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          name: options-strategy-lab-redis
+          type: redis
+          property: connectionString
+  - type: redis
+    name: options-strategy-lab-redis
+    plan: free
+
+databases:
+  - name: options-strategy-lab-db
+    plan: free
+    databaseName: options_strategy_lab
+    user: options

@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from .models import Strategy, StrategyLeg
+from .services.validators import validate_quantity, validate_right, validate_strike
 
 
 class StrategyLegSerializer(serializers.ModelSerializer):
@@ -11,45 +12,57 @@ class StrategyLegSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StrategyLeg
-        fields = ("id", "name", "created_at", "strategy")
+        fields = (
+            "id",
+            "strategy",
+            "right",
+            "strike",
+            "expiry",
+            "quantity",
+            "created_at",
+        )
         read_only_fields = ("id", "created_at")
 
-    def validate_name(self, value):
-        if len(value.strip()) < 2:
-            raise serializers.ValidationError("Leg name must be at least 2 characters.")
-        return value
+    def validate(self, attrs):
+        right = attrs.get("right")
+        strike = attrs.get("strike")
+        quantity = attrs.get("quantity")
+        try:
+            if right is not None:
+                validate_right(right)
+            if strike is not None:
+                validate_strike(float(strike))
+            if quantity is not None:
+                validate_quantity(int(quantity))
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+        return attrs
 
 
 class StrategySerializer(serializers.ModelSerializer):
-    legs = StrategyLegSerializer(many=True, required=False)
+    legs = StrategyLegSerializer(many=True, read_only=True)
 
     class Meta:
         model = Strategy
-        fields = ("id", "name", "strategy_kind", "created_at", "legs")
-        read_only_fields = ("id", "created_at")
+        fields = ("id", "name", "owner", "created_at", "legs")
+        read_only_fields = ("id", "created_at", "owner")
 
     @transaction.atomic
     def create(self, validated_data):
-        legs_data = validated_data.pop("legs", [])
         name = validated_data.get("name", "").strip()
         if len(name) < 3:
             raise serializers.ValidationError(
                 {"name": "Strategy name must be at least 3 characters."}
             )
-        if not legs_data:
-            raise serializers.ValidationError(
-                {"legs": "At least one leg is required."}
-            )
         validated_data["name"] = name
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            validated_data["owner"] = request.user
         strategy = Strategy.objects.create(**validated_data)
-        for leg_data in legs_data:
-            leg_data.pop("strategy", None)
-            StrategyLeg.objects.create(strategy=strategy, **leg_data)
         return strategy
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        legs_data = validated_data.pop("legs", None)
         for attr, value in validated_data.items():
             if attr == "name":
                 value = value.strip()
@@ -59,14 +72,4 @@ class StrategySerializer(serializers.ModelSerializer):
                     )
             setattr(instance, attr, value)
         instance.save()
-
-        if legs_data is not None:
-            if not legs_data:
-                raise serializers.ValidationError(
-                    {"legs": "At least one leg is required."}
-                )
-            instance.legs.all().delete()
-            for leg_data in legs_data:
-                leg_data.pop("strategy", None)
-                StrategyLeg.objects.create(strategy=instance, **leg_data)
         return instance

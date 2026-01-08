@@ -17,6 +17,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Backend smoke check
         run: python -m compileall backend
+      - name: Backend tests
+        run: pytest -q
   frontend:
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +28,7 @@ jobs:
           node-version: "20"
       - name: Install frontend deps
         working-directory: frontend
-        run: npm install
+        run: npm ci
       - name: Frontend smoke check
         working-directory: frontend
         run: npm run build
